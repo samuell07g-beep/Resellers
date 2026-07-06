@@ -18,14 +18,13 @@ export default function Home() {
               Proxy de Alta Performance para iOS
             </div>
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
-              <span className="text-foreground">Proxies </span>
-              <span className="text-primary neon-text-purple">iOS</span>
+              <span className="text-primary neon-text-purple">Proxy iOS</span>
               <br />
-              <span className="text-foreground">de </span>
-              <span className="text-accent neon-text-green">Alta Velocidade</span>
+              <span className="text-foreground">Site Oficial para </span>
+              <span className="text-accent neon-text-green">Revendedores</span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto leading-relaxed">
-              Acesse a internet com total privacidade e velocidade. Proxies exclusivos para dispositivos iOS, com ativação instantânea após o pagamento.
+              A melhor tecnologia de Proxy iOS para Free Fire Normal e Free Fire MAX. Funções exclusivas: HS Alto, HS Peito e HS Pescoço. Ativação instantânea.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/shop">
@@ -115,11 +114,14 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-border/30 py-8">
         <div className="container flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-foreground">Proxy Revendedores</span>
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-foreground">Proxy Revendedores</span>
+            </div>
+            <span className="text-xs text-muted-foreground">Dev: @ruanwq</span>
           </div>
-          <p className="text-xs text-muted-foreground">© 2025 Proxy Revendedores. Todos os direitos reservados.</p>
+          <p className="text-xs text-muted-foreground">© 2026 Proxy Revendedores. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>

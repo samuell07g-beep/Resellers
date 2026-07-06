@@ -1,7 +1,7 @@
 import { useLocalAuth } from "@/contexts/LocalAuthContext";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Shield, ShoppingBag, Package, LogOut, User, Settings, Menu, X } from "lucide-react";
+import { Shield, ShoppingBag, Package, LogOut, User, Settings, Menu, X, MessageCircle } from "lucide-react";
 import { useState } from "react";
 
 export default function Navbar() {
@@ -21,15 +21,26 @@ export default function Navbar() {
         </span>
       </Link>
       {isAuthenticated && (
-        <Link href="/my-purchases">
-          <span 
-            onClick={() => setMobileMenuOpen(false)}
-            className={`text-sm font-medium transition-colors cursor-pointer flex items-center gap-1.5 ${location === "/my-purchases" ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
-          >
-            <Package className="w-4 h-4" />
-            Minhas Compras
-          </span>
-        </Link>
+        <>
+          <Link href="/my-purchases">
+            <span 
+              onClick={() => setMobileMenuOpen(false)}
+              className={`text-sm font-medium transition-colors cursor-pointer flex items-center gap-1.5 ${location === "/my-purchases" ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              <Package className="w-4 h-4" />
+              Minhas Compras
+            </span>
+          </Link>
+          <Link href="/support">
+            <span 
+              onClick={() => setMobileMenuOpen(false)}
+              className={`text-sm font-medium transition-colors cursor-pointer flex items-center gap-1.5 ${location === "/support" ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              <MessageCircle className="w-4 h-4" />
+              Suporte
+            </span>
+          </Link>
+        </>
       )}
       {isAdmin && (
         <Link href="/admin">

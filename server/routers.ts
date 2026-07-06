@@ -369,20 +369,49 @@ export const appRouter = router({
 
   admin: router({
     users: adminProcedure.query(async () => getAllLocalUsers()),
-
-    userOrders: adminProcedure
-      .input(z.object({ userId: z.number() }))
-      .query(async ({ input }) => getUserOrders(input.userId)),
-
-    userKeys: adminProcedure
-      .input(z.object({ userId: z.number() }))
-      .query(async ({ input }) => getUserOrderKeys(input.userId)),
-
+    userOrders: adminProcedure.input(z.object({ userId: z.number() })).query(async ({ input }) => getUserOrders(input.userId)),
+    userKeys: adminProcedure.input(z.object({ userId: z.number() })).query(async ({ input }) => getUserOrderKeys(input.userId)),
     allOrders: adminProcedure.query(async () => getAllOrders()),
-
-    orderKeys: adminProcedure
-      .input(z.object({ orderId: z.number() }))
-      .query(async ({ input }) => getOrderKeysByOrderId(input.orderId)),
+    orderKeys: adminProcedure.input(z.object({ orderId: z.number() })).query(async ({ input }) => getOrderKeysByOrderId(input.orderId)),
+    allTickets: adminProcedure.query(async () => getAllTickets()),
+    closeTicket: adminProcedure.input(z.object({ ticketId: z.number() })).mutation(async ({ input }) => {
+      await closeTicket(input.ticketId);
+      return { success: true };
+    }),
+    deleteTicket: adminProcedure.input(z.object({ ticketId: z.number() })).mutation(async ({ input }) => {
+      await deleteTicket(input.ticketId);
+      return { success: true };
+    }),
+  }),
+  support: router({
+    create: authedProcedure.input(z.object({ subject: z.string() })).mutation(async ({ ctx, input }) => {
+      const localUser = (ctx as any).localUser;
+      return createTicket({ userId: localUser.id, subject: input.subject });
+    }),
+    myTickets: authedProcedure.query(async ({ ctx }) => {
+      const localUser = (ctx as any).localUser;
+      return getTicketsByUser(localUser.id);
+    }),
+    getMessages: authedProcedure.input(z.object({ ticketId: z.number() })).query(async ({ ctx, input }) => {
+      const localUser = (ctx as any).localUser;
+      const ticket = await getTicketById(input.ticketId);
+      if (!ticket) throw new TRPCError({ code: "NOT_FOUND" });
+      if (localUser.role !== "admin" && ticket.userId !== localUser.id) throw new TRPCError({ code: "UNAUTHORIZED" });
+      return getTicketMessages(input.ticketId);
+    }),
+    sendMessage: authedProcedure.input(z.object({ ticketId: z.number(), message: z.string() })).mutation(async ({ ctx, input }) => {
+      const localUser = (ctx as any).localUser;
+      const ticket = await getTicketById(input.ticketId);
+      if (!ticket) throw new TRPCError({ code: "NOT_FOUND" });
+      if (localUser.role !== "admin" && ticket.userId !== localUser.id) throw new TRPCError({ code: "UNAUTHORIZED" });
+      await addTicketMessage({
+        ticketId: input.ticketId,
+        userId: localUser.id,
+        message: input.message,
+        isAdmin: localUser.role === "admin",
+      });
+      return { success: true };
+    }),
   }),
 });
 

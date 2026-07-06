@@ -104,5 +104,29 @@ export type InsertLocalUser = typeof localUsers.$inferInsert;
 export type Product = typeof products.$inferSelect;
 export type ProductVariant = typeof productVariants.$inferSelect;
 export type KeyStock = typeof keysStock.$inferSelect;
+// Suporte (Tickets)
+export const tickets = mysqlTable("tickets", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull(),
+  subject: varchar("subject", { length: 255 }).notNull(),
+  status: mysqlEnum("status", ["open", "closed"]).default("open").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+// Mensagens dos Tickets
+export const ticketMessages = mysqlTable("ticket_messages", {
+  id: int("id").autoincrement().primaryKey(),
+  ticketId: int("ticket_id").notNull(),
+  userId: int("user_id").notNull(),
+  message: text("message").notNull(),
+  isAdmin: boolean("is_admin").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export type Order = typeof orders.$inferSelect;
 export type OrderKey = typeof orderKeys.$inferSelect;
+export type Ticket = typeof tickets.$inferSelect;
+export type TicketMessage = typeof ticketMessages.$inferSelect;
+export type InsertTicket = typeof tickets.$inferInsert;
+export type InsertTicketMessage = typeof ticketMessages.$inferInsert;

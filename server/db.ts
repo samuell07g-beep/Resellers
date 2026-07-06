@@ -1,7 +1,7 @@
 import { eq, and, count, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, localUsers, products, productVariants, keysStock, orders, orderKeys } from "../drizzle/schema";
-import type { InsertLocalUser } from "../drizzle/schema";
+import { InsertUser, users, localUsers, products, productVariants, keysStock, orders, orderKeys, tickets, ticketMessages } from "../drizzle/schema";
+import type { InsertLocalUser, InsertTicket, InsertTicketMessage } from "../drizzle/schema";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 let _dbError: Error | null = null;
@@ -287,4 +287,69 @@ export async function clearVariantStock(variantId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(keysStock).where(eq(keysStock.variantId, variantId));
+}
+
+// ─── Support Tickets ───────────────────────────────────────────────────────────
+
+export async function createTicket(data: InsertTicket) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(tickets).values(data);
+  const result = await db.select().from(tickets).where(eq(tickets.userId, data.userId)).orderBy(sql`createdAt DESC`).limit(1);
+  return result[0];
+}
+
+export async function getTicketsByUser(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.select().from(tickets).where(eq(tickets.userId, userId)).orderBy(sql`updatedAt DESC`);
+}
+
+export async function getAllTickets() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.select({
+    id: tickets.id,
+    userId: tickets.userId,
+    subject: tickets.subject,
+    status: tickets.status,
+    createdAt: tickets.createdAt,
+    updatedAt: tickets.updatedAt,
+    username: localUsers.username,
+  }).from(tickets)
+    .innerJoin(localUsers, eq(tickets.userId, localUsers.id))
+    .orderBy(sql`updatedAt DESC`);
+}
+
+export async function getTicketById(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(tickets).where(eq(tickets.id, id)).limit(1);
+  return result[0] ?? null;
+}
+
+export async function closeTicket(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(tickets).set({ status: "closed" }).where(eq(tickets.id, id));
+}
+
+export async function deleteTicket(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(ticketMessages).where(eq(ticketMessages.ticketId, id));
+  await db.delete(tickets).where(eq(tickets.id, id));
+}
+
+export async function addTicketMessage(data: InsertTicketMessage) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(ticketMessages).values(data);
+  await db.update(tickets).set({ updatedAt: new Date() }).where(eq(tickets.id, data.ticketId));
+}
+
+export async function getTicketMessages(ticketId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.select().from(ticketMessages).where(eq(ticketMessages.ticketId, ticketId)).orderBy(ticketMessages.createdAt);
 }

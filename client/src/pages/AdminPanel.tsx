@@ -9,11 +9,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { useLocation } from "wouter";
 import {
   Settings, Package, Users, ShoppingBag, Key, Plus, ChevronDown, ChevronRight,
-  Loader2, Copy, RefreshCw, TrendingUp, Menu, X
+  Loader2, Copy, RefreshCw, TrendingUp, Menu, X, MessageSquare, Send, Trash2
 } from "lucide-react";
 import { toast } from "sonner";
 
-type AdminTab = "overview" | "stock" | "users" | "orders";
+type AdminTab = "overview" | "stock" | "users" | "orders" | "tickets";
 
 export default function AdminPanel() {
   const { isAuthenticated, isAdmin } = useLocalAuth();
@@ -21,6 +21,8 @@ export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<AdminTab>("overview");
   const [expandedUser, setExpandedUser] = useState<number | null>(null);
   const [expandedOrder, setExpandedOrder] = useState<number | null>(null);
+  const [expandedTicket, setExpandedTicket] = useState<number | null>(null);
+  const [adminReply, setAdminReply] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -39,10 +41,15 @@ export default function AdminPanel() {
   const { data: stock, refetch: refetchStock } = trpc.stock.getAll.useQuery(undefined, { enabled: isAdmin });
   const { data: users, refetch: refetchUsers } = trpc.admin.users.useQuery(undefined, { enabled: isAdmin });
   const { data: allOrders, refetch: refetchOrders } = trpc.admin.allOrders.useQuery(undefined, { enabled: isAdmin });
+  const { data: allTickets, refetch: refetchTickets } = trpc.admin.allTickets.useQuery(undefined, { enabled: isAdmin });
 
   const addKeysMutation = trpc.stock.addKeys.useMutation();
   const updatePriceMutation = trpc.stock.updatePrice.useMutation();
   const clearStockMutation = trpc.stock.clearStock.useMutation();
+  const closeTicketMutation = trpc.admin.closeTicket.useMutation();
+  const deleteTicketMutation = trpc.admin.deleteTicket.useMutation();
+  const sendReplyMutation = trpc.support.sendMessage.useMutation();
+  const { data: ticketMessages, refetch: refetchMessages } = trpc.support.getMessages.useQuery({ ticketId: expandedTicket! }, { enabled: !!expandedTicket });
 
   // User detail queries
   const { data: userKeys } = trpc.admin.userKeys.useQuery(
@@ -101,6 +108,40 @@ export default function AdminPanel() {
     }
   };
 
+  const handleAdminReply = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminReply.trim() || !expandedTicket) return;
+    try {
+      await sendReplyMutation.mutateAsync({ ticketId: expandedTicket, message: adminReply });
+      setAdminReply("");
+      refetchMessages();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao responder");
+    }
+  };
+
+  const handleCloseTicket = async (ticketId: number) => {
+    try {
+      await closeTicketMutation.mutateAsync({ ticketId });
+      toast.success("Ticket fechado!");
+      refetchTickets();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao fechar");
+    }
+  };
+
+  const handleDeleteTicket = async (ticketId: number) => {
+    if (!confirm("Excluir este ticket permanentemente?")) return;
+    try {
+      await deleteTicketMutation.mutateAsync({ ticketId });
+      toast.success("Ticket excluído!");
+      setExpandedTicket(null);
+      refetchTickets();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao excluir");
+    }
+  };
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(() => toast.success("Copiado!"));
   };
@@ -110,6 +151,7 @@ export default function AdminPanel() {
     { id: "stock" as AdminTab, label: "Estoque", icon: Package },
     { id: "users" as AdminTab, label: "Usuários", icon: Users },
     { id: "orders" as AdminTab, label: "Pedidos", icon: ShoppingBag },
+    { id: "tickets" as AdminTab, label: "Suporte", icon: MessageSquare },
   ];
 
   const totalStock = stock?.reduce((acc: number, v: any) => acc + v.availableCount, 0) ?? 0;
@@ -481,6 +523,86 @@ export default function AdminPanel() {
                               </div>
                             ))}
                           </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Support Tickets */}
+            {activeTab === "tickets" && (
+              <div className="space-y-3 animate-entrance">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs md:text-sm text-muted-foreground font-medium">{allTickets?.length ?? 0} ticket(s)</span>
+                  <Button variant="ghost" size="sm" onClick={() => refetchTickets()} className="text-muted-foreground text-xs md:text-sm">
+                    <RefreshCw className="w-3 h-3 md:w-4 md:h-4 mr-1" /> Atualizar
+                  </Button>
+                </div>
+                {allTickets?.map((ticket: any) => (
+                  <div key={ticket.id} className="rounded-xl border border-border/50 bg-card overflow-hidden">
+                    <div
+                      className="w-full p-3 md:p-4 flex items-center gap-3 hover:bg-muted/20 transition-colors text-left cursor-pointer"
+                      onClick={() => setExpandedTicket(expandedTicket === ticket.id ? null : ticket.id)}
+                    >
+                      <div className={`w-2 h-2 rounded-full flex-shrink-0 ${ticket.status === "open" ? "bg-accent" : "bg-muted"}`} />
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-foreground text-sm md:text-base truncate">{ticket.subject}</div>
+                        <div className="text-xs text-muted-foreground">
+                          De: <span className="font-bold text-primary">{ticket.username}</span> • {new Date(ticket.updatedAt).toLocaleString("pt-BR")}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                          onClick={(e) => { e.stopPropagation(); handleDeleteTicket(ticket.id); }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                        {expandedTicket === ticket.id ? <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" /> : <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
+                      </div>
+                    </div>
+
+                    {expandedTicket === ticket.id && (
+                      <div className="border-t border-border/30 p-3 md:p-4 bg-background/30 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-foreground uppercase tracking-wider">Histórico do Chat</span>
+                          {ticket.status === "open" && (
+                            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => handleCloseTicket(ticket.id)}>
+                              Fechar Ticket
+                            </Button>
+                          )}
+                        </div>
+                        
+                        <div className="space-y-3 max-h-60 overflow-y-auto p-2 bg-background/50 rounded-lg border border-border/40">
+                          {ticketMessages?.map((m: any) => (
+                            <div key={m.id} className={`flex ${m.isAdmin ? "justify-end" : "justify-start"}`}>
+                              <div className={`max-w-[85%] p-2 rounded-lg text-xs ${m.isAdmin ? "bg-accent/20 border border-accent/30" : "bg-primary/10 border border-primary/20"}`}>
+                                <div className="font-bold mb-1">{m.isAdmin ? "Você (Suporte)" : ticket.username}</div>
+                                <p className="text-foreground break-words">{m.message}</p>
+                                <div className="text-[9px] text-muted-foreground mt-1 text-right">
+                                  {new Date(m.createdAt).toLocaleTimeString("pt-BR")}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {ticket.status === "open" && (
+                          <form onSubmit={handleAdminReply} className="flex gap-2">
+                            <Input 
+                              placeholder="Responder cliente..." 
+                              value={adminReply} 
+                              onChange={(e) => setAdminReply(e.target.value)}
+                              className="h-9 text-sm bg-background"
+                            />
+                            <Button type="submit" size="sm" className="bg-primary neon-purple" disabled={sendReplyMutation.isPending}>
+                              <Send className="w-4 h-4" />
+                            </Button>
+                          </form>
                         )}
                       </div>
                     )}

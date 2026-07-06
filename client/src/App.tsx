@@ -12,6 +12,7 @@ import Shop from "./pages/Shop";
 import Checkout from "./pages/Checkout";
 import MyPurchases from "./pages/MyPurchases";
 import AdminPanel from "./pages/AdminPanel";
+import Support from "./pages/Support";
 
 function Router() {
   return (
@@ -22,6 +23,7 @@ function Router() {
       <Route path="/shop" component={Shop} />
       <Route path="/checkout/:orderId" component={Checkout} />
       <Route path="/my-purchases" component={MyPurchases} />
+      <Route path="/support" component={Support} />
       <Route path="/admin" component={AdminPanel} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
