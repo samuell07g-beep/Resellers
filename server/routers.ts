@@ -222,6 +222,13 @@ export const appRouter = router({
         await updateVariantPrice(input.variantId, input.price);
         return { success: true };
       }),
+
+    clearStock: adminProcedure
+      .input(z.object({ variantId: z.number() }))
+      .mutation(async ({ input }) => {
+        await clearVariantStock(input.variantId);
+        return { success: true };
+      }),
   }),
 
   orders: router({
@@ -306,8 +313,9 @@ export const appRouter = router({
         if (!order.pixTransactionId) return pendingData;
         try {
           const pixData = await checkPixStatus(order.pixTransactionId);
-          const approvedStates = ["APROVADO", "PAGO", "CONCLUIDO", "COMPLETED", "APPROVED"];
-          if (pixData && approvedStates.includes(pixData.transactionState?.toUpperCase())) {
+          const approvedStates = ["APROVADO", "PAGO", "CONCLUIDO", "COMPLETED", "APPROVED", "SUCCESS", "PAID"];
+          const status = pixData?.transactionState?.toUpperCase() || pixData?.status?.toUpperCase();
+          if (pixData && approvedStates.includes(status)) {
             // Check if keys already released (idempotency)
             const existingKeys = await getOrderKeysByOrderId(order.id);
             if (existingKeys.length > 0) {

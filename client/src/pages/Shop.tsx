@@ -42,7 +42,7 @@ export default function Shop() {
 
   const handleBuy = (variant: Variant) => {
     if (!isAuthenticated) {
-      toast.error("Faça login para comprar");
+      toast.error("Você precisa estar logado para realizar uma compra.");
       navigate("/login");
       return;
     }

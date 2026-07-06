@@ -42,6 +42,7 @@ export default function AdminPanel() {
 
   const addKeysMutation = trpc.stock.addKeys.useMutation();
   const updatePriceMutation = trpc.stock.updatePrice.useMutation();
+  const clearStockMutation = trpc.stock.clearStock.useMutation();
 
   // User detail queries
   const { data: userKeys } = trpc.admin.userKeys.useQuery(
@@ -86,6 +87,17 @@ export default function AdminPanel() {
       refetchStock();
     } catch (err: any) {
       toast.error(err?.message || "Erro ao atualizar preço");
+    }
+  };
+
+  const handleClearStock = async (variantId: number) => {
+    if (!confirm("Tem certeza que deseja limpar TODO o estoque desta variação? Esta ação não pode ser desfeita.")) return;
+    try {
+      await clearStockMutation.mutateAsync({ variantId });
+      toast.success("Estoque limpo com sucesso!");
+      refetchStock();
+    } catch (err: any) {
+      toast.error(err?.message || "Erro ao limpar estoque");
     }
   };
 
@@ -339,6 +351,15 @@ export default function AdminPanel() {
                           disabled={updatePriceMutation.isPending}
                         >
                           Salvar
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10 w-full md:w-auto text-xs md:text-sm"
+                          onClick={() => handleClearStock(v.id)}
+                          disabled={clearStockMutation.isPending}
+                        >
+                          Limpar Estoque
                         </Button>
                       </div>
                     ))}
