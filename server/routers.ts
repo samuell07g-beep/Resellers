@@ -30,6 +30,7 @@ import {
   getAllOrders,
   getOrderKeysByOrderId,
   getPendingOrders,
+  clearVariantStock,
 } from "./db";
 import { notifyOwner } from "./_core/notification";
 
@@ -313,9 +314,9 @@ export const appRouter = router({
         if (!order.pixTransactionId) return pendingData;
         try {
           const pixData = await checkPixStatus(order.pixTransactionId);
-          const approvedStates = ["APROVADO", "PAGO", "CONCLUIDO", "COMPLETED", "APPROVED", "SUCCESS", "PAID"];
+          const approvedStates = ["APROVADO", "PAGO", "CONCLUIDO", "COMPLETED", "APPROVED", "SUCCESS", "PAID", "COMPLETO"];
           const status = pixData?.transactionState?.toUpperCase() || pixData?.status?.toUpperCase();
-          if (pixData && approvedStates.includes(status)) {
+          if (pixData && status && approvedStates.includes(status)) {
             // Check if keys already released (idempotency)
             const existingKeys = await getOrderKeysByOrderId(order.id);
             if (existingKeys.length > 0) {

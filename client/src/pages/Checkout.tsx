@@ -43,6 +43,8 @@ export default function Checkout() {
     if (result.data?.status === "paid") {
       setPolling(false);
       toast.success("Pagamento confirmado! Suas keys foram liberadas.");
+    } else if (result.isError) {
+      toast.error("Erro ao verificar pagamento. Tente novamente em instantes.");
     }
   }, [refetch]);
 
