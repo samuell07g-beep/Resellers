@@ -91,7 +91,20 @@ export default function MyPurchases() {
                 <div className="p-3 md:p-4 border-b border-border/30 bg-primary/5 flex items-center gap-2">
                   <Key className="w-4 h-4 text-primary flex-shrink-0" />
                   <span className="font-semibold text-xs md:text-base text-foreground truncate">Proxy iOS — {variantName}</span>
-                  <span className="ml-auto text-xs text-muted-foreground flex-shrink-0">{(variantKeys as any[]).length}</span>
+                  <div className="ml-auto flex items-center gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-7 text-[10px] md:text-xs text-primary hover:text-primary hover:bg-primary/10 border border-primary/30"
+                      onClick={() => {
+                        const allKeys = (variantKeys as any[]).map(k => k.keyValue).join("\n");
+                        navigator.clipboard.writeText(allKeys).then(() => toast.success("Keys copiadas!"));
+                      }}
+                    >
+                      Copiar Todas
+                    </Button>
+                    <span className="text-xs text-muted-foreground flex-shrink-0">{(variantKeys as any[]).length}</span>
+                  </div>
                 </div>
                 <div className="p-3 md:p-4 space-y-2 md:space-y-3">
                   {(variantKeys as any[]).map((key: any, i: number) => (

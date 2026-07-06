@@ -93,7 +93,20 @@ export default function Checkout() {
             <div className="p-3 md:p-4 border-b border-border/30 bg-accent/5 flex items-center gap-2">
               <Key className="w-4 h-4 text-accent flex-shrink-0" />
               <span className="font-semibold text-sm md:text-base text-foreground">Suas Keys</span>
-              <span className="ml-auto text-xs text-muted-foreground">{data.keys.length}</span>
+              <div className="ml-auto flex items-center gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-7 text-[10px] md:text-xs text-accent hover:text-accent hover:bg-accent/10 border border-accent/30"
+                  onClick={() => {
+                    const allKeys = (data.keys as any[]).map(k => k.keyValue).join("\n");
+                    navigator.clipboard.writeText(allKeys).then(() => toast.success("Todas as keys copiadas!"));
+                  }}
+                >
+                  Copiar Todas
+                </Button>
+                <span className="text-xs text-muted-foreground">{data.keys.length}</span>
+              </div>
             </div>
             <div className="p-3 md:p-4 space-y-2 md:space-y-3">
               {(data.keys as any[]).map((key: any, i: number) => (
