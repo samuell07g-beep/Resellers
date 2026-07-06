@@ -227,7 +227,7 @@ export default function Shop() {
                       variant="outline"
                       size="icon"
                       className="w-8 h-8 border-border/60"
-                      onClick={() => setQuantity(q => Math.min(selectedVariant.availableStock, q + 1))}
+                      onClick={() => setQuantity(q => Math.min(Math.min(selectedVariant.availableStock, 50), q + 1))}
                     >
                       <Plus className="w-3 h-3" />
                     </Button>
