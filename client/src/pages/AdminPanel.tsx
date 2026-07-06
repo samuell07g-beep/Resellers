@@ -584,7 +584,7 @@ export default function AdminPanel() {
                                 <div className="font-bold mb-1">{m.isAdmin ? "Você (Suporte)" : ticket.username}</div>
                                 <p className="text-foreground break-words">{m.message}</p>
                                 <div className="text-[9px] text-muted-foreground mt-1 text-right">
-                                  {new Date(m.createdAt).toLocaleTimeString("pt-BR")}
+                                  {m.createdAt ? new Date(m.createdAt).toLocaleTimeString("pt-BR") : "--:--"}
                                 </div>
                               </div>
                             </div>
