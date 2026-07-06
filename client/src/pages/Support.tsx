@@ -146,7 +146,7 @@ export default function Support() {
                       </div>
                       <p className="text-foreground leading-relaxed break-words">{m.message}</p>
                       <div className="text-[9px] text-muted-foreground mt-1 text-right">
-                        {m.createdAt ? new Date(m.createdAt).toLocaleTimeString("pt-BR", { hour: "2-2-digit", minute: "2-digit" }) : "--:--"}
+                        {m.createdAt ? new Date(m.createdAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "--:--"}
                       </div>
                     </div>
                   </div>
