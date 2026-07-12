@@ -5,9 +5,9 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Link, useLocation } from "wouter";
-import { ShoppingCart, Minus, Plus, Package, Zap, Loader2, AlertCircle } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Package, Zap, Loader2, AlertCircle, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 
 interface Variant {
@@ -90,12 +90,12 @@ export default function Shop() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background dark-grid">
       <Navbar />
 
-      <div className="container px-4 md:px-6 py-6 md:py-12">
-        <div className="mb-8 md:mb-10">
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+      <div className="container px-4 md:px-6 py-8 md:py-14">
+        <div className="mb-8 md:mb-12">
+          <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-2 tracking-tight">
             Loja de <span className="text-primary">Proxies</span>
           </h1>
           <p className="text-sm md:text-base text-muted-foreground">Escolha o plano ideal e ative instantaneamente após o pagamento.</p>
@@ -108,17 +108,17 @@ export default function Shop() {
         ) : (
           <div className="space-y-6 md:space-y-10">
             {(products as Product[] | undefined)?.map(product => (
-              <div key={product.id} className="rounded-2xl border border-border bg-card overflow-hidden">
+              <div key={product.id} className="rounded-2xl border border-border bg-card/80 backdrop-blur-sm overflow-hidden">
                 {/* Product header */}
-                <div className="p-4 md:p-6 border-b border-border/50 bg-secondary/50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-secondary border border-border flex items-center justify-center flex-shrink-0">
-                      <Zap className="w-5 h-5 text-foreground" />
+                <div className="p-5 md:p-7 border-b border-border/50 bg-secondary/30">
+                  <div className="flex items-center gap-4">
+                    <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+                      <Zap className="w-5 h-5 text-primary" />
                     </div>
                     <div className="min-w-0">
-                      <h2 className="text-lg md:text-xl font-bold text-foreground">{product.name}</h2>
+                      <h2 className="text-lg md:text-xl font-bold text-foreground tracking-tight">{product.name}</h2>
                       {product.description && (
-                        <p className="text-xs md:text-sm text-muted-foreground truncate">{product.description}</p>
+                        <p className="text-xs md:text-sm text-muted-foreground mt-0.5">{product.description}</p>
                       )}
                     </div>
                   </div>
@@ -132,35 +132,35 @@ export default function Shop() {
                     return (
                       <div
                         key={variant.id}
-                        className={`relative p-4 md:p-5 rounded-xl border transition-all ${
+                        className={`relative p-5 md:p-6 rounded-xl border transition-all duration-200 ${
                           isPopular
-                            ? "border-primary bg-secondary"
-                            : "border-border bg-background/50 hover:border-primary/30"
-                        } ${outOfStock ? "opacity-50" : ""}`}
+                            ? "border-primary/50 bg-secondary/60"
+                            : "border-border bg-background/60 hover:border-primary/30"
+                        } ${outOfStock ? "opacity-50 pointer-events-none" : ""}`}
                       >
                         {isPopular && (
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider">
+                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider">
                             Popular
                           </div>
                         )}
 
-                        <div className="text-center mb-3 md:mb-4">
-                          <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Proxy iOS</div>
-                          <div className="text-base md:text-lg font-bold text-foreground">{variant.name}</div>
-                          <div className={`text-2xl md:text-3xl font-extrabold mt-2 ${isPopular ? "text-primary" : "text-foreground"}`}>
+                        <div className="text-center mb-4 md:mb-5">
+                          <div className="text-[10px] text-muted-foreground uppercase tracking-[0.15em] mb-1.5">Proxy iOS</div>
+                          <div className="text-sm md:text-base font-semibold text-foreground">{variant.name}</div>
+                          <div className={`text-2xl md:text-3xl font-extrabold mt-2 tracking-tight ${isPopular ? "text-primary" : "text-foreground"}`}>
                             R$ {variant.price.toFixed(2).replace(".", ",")}
                           </div>
-                          <div className="text-xs text-muted-foreground mt-1">por key</div>
+                          <div className="text-xs text-muted-foreground mt-0.5">por key</div>
                         </div>
 
                         {/* Stock */}
-                        <div className={`flex items-center justify-center gap-1.5 text-xs mb-3 md:mb-4 ${outOfStock ? "text-destructive" : "text-primary"}`}>
+                        <div className={`flex items-center justify-center gap-1.5 text-xs mb-4 md:mb-5 ${outOfStock ? "text-destructive" : "text-muted-foreground"}`}>
                           <Package className="w-3.5 h-3.5" />
                           {outOfStock ? "Sem estoque" : `${variant.availableStock} disponíveis`}
                         </div>
 
                         <Button
-                          className={`w-full text-sm md:text-base ${isPopular ? "bg-primary hover:bg-primary/90 text-primary-foreground" : ""}`}
+                          className={`w-full text-sm h-10 ${isPopular ? "bg-primary hover:bg-primary/90 text-primary-foreground primary-glow" : ""}`}
                           variant={isPopular ? "default" : "outline"}
                           disabled={outOfStock}
                           onClick={() => handleBuy(variant)}
@@ -177,7 +177,7 @@ export default function Shop() {
         )}
 
         {!isAuthenticated && (
-          <div className="mt-6 md:mt-8 p-3 md:p-4 rounded-xl border border-border bg-secondary/50 flex items-center gap-3">
+          <div className="mt-6 md:mt-8 p-4 rounded-xl border border-border bg-card/60 flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-primary flex-shrink-0" />
             <p className="text-xs md:text-sm text-foreground">
               <Link href="/login"><span className="text-primary font-medium cursor-pointer hover:underline">Faça login</span></Link>
@@ -189,89 +189,104 @@ export default function Shop() {
         )}
       </div>
 
-      {/* Checkout Modal */}
+      {/* Checkout Modal — Premium centered design */}
       <Dialog open={showCheckoutModal} onOpenChange={setShowCheckoutModal}>
-        <DialogContent className="bg-card border-border max-w-md w-full mx-4">
-          <DialogHeader>
-            <DialogTitle className="text-foreground flex items-center gap-2">
-              <ShoppingCart className="w-5 h-5 text-primary" />
-              Finalizar Compra
-            </DialogTitle>
-          </DialogHeader>
+        <DialogContent className="bg-card border-border max-w-[420px] w-full mx-4 p-0 overflow-hidden rounded-2xl" showCloseButton={true}>
+          {/* Modal header */}
+          <div className="px-6 pt-6 pb-4 border-b border-border/50 bg-secondary/30">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+                <CreditCard className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <DialogTitle className="text-base font-bold text-foreground tracking-tight">Finalizar Compra</DialogTitle>
+                <p className="text-xs text-muted-foreground mt-0.5">Preencha os dados para gerar o pagamento PIX</p>
+              </div>
+            </div>
+          </div>
 
           {selectedVariant && (
-            <div className="space-y-4 md:space-y-5">
-              {/* Order summary */}
-              <div className="p-3 md:p-4 rounded-xl bg-background/50 border border-border">
-                <div className="text-xs md:text-sm text-muted-foreground mb-3 font-medium">Resumo do pedido</div>
-                <div className="flex justify-between items-center mb-2 gap-2">
-                  <span className="text-xs md:text-sm text-foreground truncate">Proxy iOS - {selectedVariant.name}</span>
-                  <span className="text-xs md:text-sm text-muted-foreground flex-shrink-0">R$ {selectedVariant.price.toFixed(2).replace(".", ",")}/un</span>
+            <div className="px-6 py-5 space-y-5">
+              {/* Order summary card */}
+              <div className="rounded-xl border border-border bg-background/60 p-4 space-y-3">
+                <div className="text-[10px] text-muted-foreground uppercase tracking-[0.15em] font-semibold">Resumo do pedido</div>
+                
+                <div className="flex justify-between items-center gap-3">
+                  <span className="text-sm text-foreground font-medium truncate">Proxy iOS — {selectedVariant.name}</span>
+                  <span className="text-xs text-muted-foreground flex-shrink-0 tabular-nums">R$ {selectedVariant.price.toFixed(2).replace(".", ",")}/un</span>
                 </div>
 
                 {/* Quantity selector */}
-                <div className="flex items-center justify-between mt-3">
-                  <span className="text-xs md:text-sm text-foreground">Quantidade</span>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="w-8 h-8 border-border"
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Quantidade</span>
+                  <div className="flex items-center gap-0 border border-border rounded-lg overflow-hidden">
+                    <button
+                      className="w-9 h-9 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors"
                       onClick={() => setQuantity(q => Math.max(1, q - 1))}
                     >
-                      <Minus className="w-3 h-3" />
-                    </Button>
-                    <span className="w-8 text-center font-bold text-foreground">{quantity}</span>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="w-8 h-8 border-border"
+                      <Minus className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="w-10 h-9 flex items-center justify-center text-sm font-bold text-foreground border-x border-border bg-background/40 tabular-nums">
+                      {quantity}
+                    </span>
+                    <button
+                      className="w-9 h-9 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors"
                       onClick={() => setQuantity(q => Math.min(Math.min(selectedVariant.availableStock, 50), q + 1))}
                     >
-                      <Plus className="w-3 h-3" />
-                    </Button>
+                      <Plus className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
 
-                <div className="border-t border-border/50 mt-3 pt-3 flex justify-between items-center">
-                  <span className="font-semibold text-foreground">Total</span>
-                  <span className="text-xl font-extrabold text-primary">
+                <div className="border-t border-border/50 pt-3 flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground font-medium">Total</span>
+                  <span className="text-xl font-extrabold text-primary tracking-tight">
                     R$ {Number(totalPrice).toFixed(2).replace(".", ",")}
                   </span>
                 </div>
               </div>
 
               {/* Payer info */}
-              <div className="space-y-3">
+              <div className="space-y-3.5">
                 <div className="space-y-1.5">
-                  <Label className="text-xs md:text-sm font-medium text-foreground">Nome completo</Label>
+                  <Label className="text-xs font-semibold text-foreground uppercase tracking-wider">Nome completo</Label>
                   <Input
                     placeholder="Seu nome completo"
                     value={payerName}
                     onChange={e => setPayerName(e.target.value)}
-                    className="bg-input border-border focus:border-primary/60 h-10 text-sm"
+                    className="bg-input border-border focus:border-primary/60 h-10 text-sm rounded-lg"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-medium text-foreground">CPF</Label>
+                  <Label className="text-xs font-semibold text-foreground uppercase tracking-wider">CPF</Label>
                   <Input
                     placeholder="000.000.000-00"
                     value={payerDoc}
                     onChange={e => setPayerDoc(formatCPF(e.target.value))}
-                    className="bg-input border-border focus:border-primary/60 h-10 text-sm"
+                    className="bg-input border-border focus:border-primary/60 h-10 text-sm rounded-lg"
                     maxLength={14}
                   />
-                  <p className="text-xs text-muted-foreground">Necessário para geração do PIX</p>
+                  <p className="text-[11px] text-muted-foreground">Necessário para geração do PIX</p>
                 </div>
               </div>
 
+              {/* CTA */}
               <Button
-                className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-sm primary-glow"
+                className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-sm primary-glow transition-all"
                 onClick={handleConfirmOrder}
-                disabled={checkoutLoading || !payerName || payerDoc.replace(/\D/g, "").length < 11}
+                disabled={checkoutLoading || !payerName.trim() || payerDoc.replace(/\D/g, "").length < 11}
               >
-                {checkoutLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                {checkoutLoading ? "Gerando PIX..." : "Gerar PIX"}
+                {checkoutLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    Gerando PIX...
+                  </>
+                ) : (
+                  <>
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    Gerar PIX
+                  </>
+                )}
               </Button>
             </div>
           )}
