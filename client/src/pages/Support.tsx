@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { MessageSquare, Send, Plus, Clock, CheckCircle2, Loader2, User, Shield } from "lucide-react";
+import { MessageSquare, Send, Plus, Loader2, User, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 
@@ -75,13 +75,13 @@ export default function Support() {
           </div>
 
           <form onSubmit={handleCreateTicket} className="space-y-2">
-            <Input 
-              placeholder="Assunto do ticket..." 
-              value={subject} 
+            <Input
+              placeholder="Assunto do ticket..."
+              value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              className="bg-card border-border/50"
+              className="bg-card border-border"
             />
-            <Button type="submit" className="w-full bg-primary neon-purple" disabled={createTicketMutation.isPending}>
+            <Button type="submit" className="w-full bg-primary text-primary-foreground font-medium" disabled={createTicketMutation.isPending}>
               <Plus className="w-4 h-4 mr-2" /> Novo Ticket
             </Button>
           </form>
@@ -96,11 +96,11 @@ export default function Support() {
                 <button
                   key={t.id}
                   onClick={() => setSelectedTicket(t.id)}
-                  className={`w-full text-left p-3 rounded-xl border transition-all ${selectedTicket === t.id ? "border-primary bg-primary/10" : "border-border/50 bg-card hover:border-primary/30"}`}
+                  className={`w-full text-left p-3 rounded-xl border transition-all ${selectedTicket === t.id ? "border-primary bg-secondary" : "border-border bg-card hover:border-primary/30"}`}
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs text-muted-foreground">#{t.id}</span>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${t.status === "open" ? "bg-accent/20 text-accent border-accent/30" : "bg-muted text-muted-foreground border-border/40"}`}>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${t.status === "open" ? "bg-primary text-primary-foreground border-primary/30" : "bg-muted text-muted-foreground border-border"}`}>
                       {t.status === "open" ? "Aberto" : "Fechado"}
                     </span>
                   </div>
@@ -115,13 +115,13 @@ export default function Support() {
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 flex flex-col rounded-2xl border border-border/50 bg-card overflow-hidden min-h-[500px]">
+        <div className="flex-1 flex flex-col rounded-2xl border border-border bg-card overflow-hidden min-h-[500px]">
           {selectedTicket ? (
             <>
               {/* Chat Header */}
-              <div className="p-4 border-b border-border/30 bg-primary/5 flex items-center justify-between">
+              <div className="p-4 border-b border-border/50 bg-secondary/50 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-secondary border border-border flex items-center justify-center">
                     <MessageSquare className="w-4 h-4 text-primary" />
                   </div>
                   <div>
@@ -137,14 +137,14 @@ export default function Support() {
               <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-background/30">
                 {messages?.map((m: any) => (
                   <div key={m.id} className={`flex ${m.isAdmin ? "justify-start" : "justify-end"}`}>
-                    <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${m.isAdmin ? "bg-accent/10 border border-accent/20 rounded-tl-none" : "bg-primary/10 border border-primary/20 rounded-tr-none"}`}>
+                    <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${m.isAdmin ? "bg-secondary border border-border rounded-tl-none" : "bg-primary text-primary-foreground rounded-tr-none"}`}>
                       <div className="flex items-center gap-1.5 mb-1">
-                        {m.isAdmin ? <Shield className="w-3 h-3 text-accent" /> : <User className="w-3 h-3 text-primary" />}
-                        <span className={`text-[10px] font-bold ${m.isAdmin ? "text-accent" : "text-primary"}`}>
+                        {m.isAdmin ? <Shield className="w-3 h-3 text-foreground" /> : <User className="w-3 h-3 text-primary-foreground" />}
+                        <span className={`text-[10px] font-bold ${m.isAdmin ? "text-foreground" : "text-primary-foreground"}`}>
                           {m.isAdmin ? "Suporte" : "Você"}
                         </span>
                       </div>
-                      <p className="text-foreground leading-relaxed break-words">{m.message}</p>
+                      <p className={`${m.isAdmin ? "text-foreground" : "text-primary-foreground"} leading-relaxed break-words`}>{m.message}</p>
                       <div className="text-[9px] text-muted-foreground mt-1 text-right">
                         {m.createdAt ? new Date(m.createdAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "--:--"}
                       </div>
@@ -155,26 +155,26 @@ export default function Support() {
 
               {/* Input */}
               {tickets?.find((t: any) => t.id === selectedTicket)?.status === "open" ? (
-                <form onSubmit={handleSendMessage} className="p-4 border-t border-border/30 bg-card flex gap-2">
-                  <Input 
-                    placeholder="Sua mensagem..." 
-                    value={newMessage} 
+                <form onSubmit={handleSendMessage} className="p-4 border-t border-border/50 bg-card flex gap-2">
+                  <Input
+                    placeholder="Sua mensagem..."
+                    value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    className="flex-1 bg-background border-border/50"
+                    className="flex-1 bg-background border-border"
                   />
-                  <Button type="submit" size="icon" className="bg-primary neon-purple shrink-0" disabled={sendMessageMutation.isPending}>
+                  <Button type="submit" size="icon" className="bg-primary text-primary-foreground shrink-0 font-medium" disabled={sendMessageMutation.isPending}>
                     <Send className="w-4 h-4" />
                   </Button>
                 </form>
               ) : (
-                <div className="p-4 text-center text-xs text-muted-foreground bg-muted/20 border-t border-border/30">
+                <div className="p-4 text-center text-xs text-muted-foreground bg-muted/20 border-t border-border/50">
                   Este ticket foi encerrado.
                 </div>
               )}
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center p-10 text-center">
-              <div className="w-16 h-16 rounded-full bg-muted/20 flex items-center justify-center mb-4">
+              <div className="w-16 h-16 rounded-full bg-secondary border border-border flex items-center justify-center mb-4">
                 <MessageSquare className="w-8 h-8 text-muted-foreground" />
               </div>
               <h3 className="font-bold text-foreground mb-2">Selecione um ticket</h3>

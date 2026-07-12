@@ -66,7 +66,6 @@ export default function Shop() {
         payerName,
         payerDocument: cleanDoc,
       });
-      // Save PIX data to sessionStorage for checkout page
       sessionStorage.setItem(`pix_${result.orderId}`, JSON.stringify({
         qrCodeBase64: result.qrCodeBase64,
         copyPaste: result.copyPaste,
@@ -97,7 +96,7 @@ export default function Shop() {
       <div className="container px-4 md:px-6 py-6 md:py-12">
         <div className="mb-8 md:mb-10">
           <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-            <span className="text-primary neon-text-purple">Loja</span> de Proxies
+            Loja de <span className="text-primary">Proxies</span>
           </h1>
           <p className="text-sm md:text-base text-muted-foreground">Escolha o plano ideal e ative instantaneamente após o pagamento.</p>
         </div>
@@ -109,12 +108,12 @@ export default function Shop() {
         ) : (
           <div className="space-y-6 md:space-y-10">
             {(products as Product[] | undefined)?.map(product => (
-              <div key={product.id} className="rounded-2xl border border-border/50 bg-card overflow-hidden">
+              <div key={product.id} className="rounded-2xl border border-border bg-card overflow-hidden">
                 {/* Product header */}
-                <div className="p-4 md:p-6 border-b border-border/30 bg-gradient-to-r from-primary/5 to-transparent">
+                <div className="p-4 md:p-6 border-b border-border/50 bg-secondary/50">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center flex-shrink-0">
-                      <Zap className="w-5 h-5 text-primary" />
+                    <div className="w-10 h-10 rounded-xl bg-secondary border border-border flex items-center justify-center flex-shrink-0">
+                      <Zap className="w-5 h-5 text-foreground" />
                     </div>
                     <div className="min-w-0">
                       <h2 className="text-lg md:text-xl font-bold text-foreground">{product.name}</h2>
@@ -135,33 +134,33 @@ export default function Shop() {
                         key={variant.id}
                         className={`relative p-4 md:p-5 rounded-xl border transition-all ${
                           isPopular
-                            ? "border-primary/60 bg-primary/5"
-                            : "border-border/50 bg-background/50 hover:border-primary/30"
-                        } ${outOfStock ? "opacity-60" : ""}`}
+                            ? "border-primary bg-secondary"
+                            : "border-border bg-background/50 hover:border-primary/30"
+                        } ${outOfStock ? "opacity-50" : ""}`}
                       >
                         {isPopular && (
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">
-                            POPULAR
+                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider">
+                            Popular
                           </div>
                         )}
 
                         <div className="text-center mb-3 md:mb-4">
                           <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Proxy iOS</div>
                           <div className="text-base md:text-lg font-bold text-foreground">{variant.name}</div>
-                          <div className={`text-2xl md:text-3xl font-extrabold mt-2 ${isPopular ? "text-primary neon-text-purple" : "text-foreground"}`}>
+                          <div className={`text-2xl md:text-3xl font-extrabold mt-2 ${isPopular ? "text-primary" : "text-foreground"}`}>
                             R$ {variant.price.toFixed(2).replace(".", ",")}
                           </div>
                           <div className="text-xs text-muted-foreground mt-1">por key</div>
                         </div>
 
                         {/* Stock */}
-                        <div className={`flex items-center justify-center gap-1.5 text-xs mb-3 md:mb-4 ${outOfStock ? "text-destructive" : "text-accent"}`}>
+                        <div className={`flex items-center justify-center gap-1.5 text-xs mb-3 md:mb-4 ${outOfStock ? "text-destructive" : "text-primary"}`}>
                           <Package className="w-3.5 h-3.5" />
                           {outOfStock ? "Sem estoque" : `${variant.availableStock} disponíveis`}
                         </div>
 
                         <Button
-                          className={`w-full text-sm md:text-base ${isPopular ? "bg-primary hover:bg-primary/90 neon-purple" : ""}`}
+                          className={`w-full text-sm md:text-base ${isPopular ? "bg-primary hover:bg-primary/90 text-primary-foreground" : ""}`}
                           variant={isPopular ? "default" : "outline"}
                           disabled={outOfStock}
                           onClick={() => handleBuy(variant)}
@@ -178,7 +177,7 @@ export default function Shop() {
         )}
 
         {!isAuthenticated && (
-          <div className="mt-6 md:mt-8 p-3 md:p-4 rounded-xl border border-primary/30 bg-primary/5 flex items-center gap-3">
+          <div className="mt-6 md:mt-8 p-3 md:p-4 rounded-xl border border-border bg-secondary/50 flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-primary flex-shrink-0" />
             <p className="text-xs md:text-sm text-foreground">
               <Link href="/login"><span className="text-primary font-medium cursor-pointer hover:underline">Faça login</span></Link>
@@ -192,7 +191,7 @@ export default function Shop() {
 
       {/* Checkout Modal */}
       <Dialog open={showCheckoutModal} onOpenChange={setShowCheckoutModal}>
-        <DialogContent className="bg-card border-border/60 max-w-md w-full mx-4">
+        <DialogContent className="bg-card border-border max-w-md w-full mx-4">
           <DialogHeader>
             <DialogTitle className="text-foreground flex items-center gap-2">
               <ShoppingCart className="w-5 h-5 text-primary" />
@@ -203,7 +202,7 @@ export default function Shop() {
           {selectedVariant && (
             <div className="space-y-4 md:space-y-5">
               {/* Order summary */}
-              <div className="p-3 md:p-4 rounded-xl bg-background/50 border border-border/40">
+              <div className="p-3 md:p-4 rounded-xl bg-background/50 border border-border">
                 <div className="text-xs md:text-sm text-muted-foreground mb-3 font-medium">Resumo do pedido</div>
                 <div className="flex justify-between items-center mb-2 gap-2">
                   <span className="text-xs md:text-sm text-foreground truncate">Proxy iOS - {selectedVariant.name}</span>
@@ -217,7 +216,7 @@ export default function Shop() {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="w-8 h-8 border-border/60"
+                      className="w-8 h-8 border-border"
                       onClick={() => setQuantity(q => Math.max(1, q - 1))}
                     >
                       <Minus className="w-3 h-3" />
@@ -226,7 +225,7 @@ export default function Shop() {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="w-8 h-8 border-border/60"
+                      className="w-8 h-8 border-border"
                       onClick={() => setQuantity(q => Math.min(Math.min(selectedVariant.availableStock, 50), q + 1))}
                     >
                       <Plus className="w-3 h-3" />
@@ -234,9 +233,9 @@ export default function Shop() {
                   </div>
                 </div>
 
-                <div className="border-t border-border/30 mt-3 pt-3 flex justify-between items-center">
+                <div className="border-t border-border/50 mt-3 pt-3 flex justify-between items-center">
                   <span className="font-semibold text-foreground">Total</span>
-                  <span className="text-xl font-extrabold text-primary neon-text-purple">
+                  <span className="text-xl font-extrabold text-primary">
                     R$ {Number(totalPrice).toFixed(2).replace(".", ",")}
                   </span>
                 </div>
@@ -250,7 +249,7 @@ export default function Shop() {
                     placeholder="Seu nome completo"
                     value={payerName}
                     onChange={e => setPayerName(e.target.value)}
-                    className="bg-input border-border/60 focus:border-primary/60 h-10"
+                    className="bg-input border-border focus:border-primary/60 h-10 text-sm"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -259,7 +258,7 @@ export default function Shop() {
                     placeholder="000.000.000-00"
                     value={payerDoc}
                     onChange={e => setPayerDoc(formatCPF(e.target.value))}
-                    className="bg-input border-border/60 focus:border-primary/60 h-10"
+                    className="bg-input border-border focus:border-primary/60 h-10 text-sm"
                     maxLength={14}
                   />
                   <p className="text-xs text-muted-foreground">Necessário para geração do PIX</p>
@@ -267,7 +266,7 @@ export default function Shop() {
               </div>
 
               <Button
-                className="w-full h-11 bg-primary hover:bg-primary/90 neon-purple font-semibold"
+                className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-sm primary-glow"
                 onClick={handleConfirmOrder}
                 disabled={checkoutLoading || !payerName || payerDoc.replace(/\D/g, "").length < 11}
               >

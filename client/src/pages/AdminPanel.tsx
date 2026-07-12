@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocation } from "wouter";
 import {
-  Settings, Package, Users, ShoppingBag, Key, Plus, ChevronDown, ChevronRight,
+  Package, Users, ShoppingBag, Key, Plus, ChevronDown, ChevronRight,
   Loader2, Copy, RefreshCw, TrendingUp, Menu, X, MessageSquare, Send, Trash2
 } from "lucide-react";
 import { toast } from "sonner";
@@ -26,7 +26,6 @@ export default function AdminPanel() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Stock management
   const [selectedVariantId, setSelectedVariantId] = useState<number | null>(null);
   const [keysText, setKeysText] = useState("");
   const [newPrice, setNewPrice] = useState("");
@@ -51,7 +50,6 @@ export default function AdminPanel() {
   const sendReplyMutation = trpc.support.sendMessage.useMutation();
   const { data: ticketMessages, refetch: refetchMessages } = trpc.support.getMessages.useQuery({ ticketId: expandedTicket! }, { enabled: !!expandedTicket });
 
-  // User detail queries
   const { data: userKeys } = trpc.admin.userKeys.useQuery(
     { userId: expandedUser! },
     { enabled: !!expandedUser && isAdmin }
@@ -160,25 +158,28 @@ export default function AdminPanel() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="flex h-[calc(100vh-64px)] overflow-hidden">
+      <div className="flex h-[calc(100vh-56px)] overflow-hidden">
         {/* Sidebar */}
         <div
           className={`${
             isMobile
               ? sidebarOpen
-                ? "fixed inset-0 top-16 z-40 w-full"
+                ? "fixed inset-0 top-14 z-40 w-full"
                 : "hidden"
-              : "w-64"
-          } border-r border-border/50 bg-card transition-all duration-300 overflow-y-auto flex flex-col`}
+              : "w-56"
+          } border-r border-border bg-card transition-all duration-300 overflow-y-auto flex flex-col`}
         >
-          <div className="p-4 border-b border-border/30">
-            <h2 className="font-bold text-foreground flex items-center gap-2">
-              <Settings className="w-5 h-5 text-accent" />
-              Admin
+          <div className="p-4 border-b border-border/50">
+            <h2 className="font-bold text-foreground text-sm flex items-center gap-2">
+              <svg viewBox="0 0 24 24" className="w-4 h-4 text-primary" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+              ADMIN
             </h2>
           </div>
 
-          <nav className="flex-1 p-3 space-y-2">
+          <nav className="flex-1 p-3 space-y-1">
             {menuItems.map((item) => (
               <button
                 key={item.id}
@@ -188,8 +189,8 @@ export default function AdminPanel() {
                 }}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                   activeTab === item.id
-                    ? "bg-primary/20 text-primary border border-primary/40"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                 }`}
               >
                 <item.icon className="w-4 h-4 flex-shrink-0" />
@@ -199,11 +200,11 @@ export default function AdminPanel() {
           </nav>
 
           {isMobile && (
-            <div className="p-3 border-t border-border/30">
+            <div className="p-3 border-t border-border/50">
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full text-xs"
+                className="w-full text-xs border-border"
                 onClick={() => setSidebarOpen(false)}
               >
                 <X className="w-3 h-3 mr-1" />
@@ -215,15 +216,14 @@ export default function AdminPanel() {
 
         {/* Main Content */}
         <div className="flex-1 overflow-auto">
-          {/* Mobile header with menu button */}
           {isMobile && (
-            <div className="sticky top-0 z-30 bg-card border-b border-border/50 p-3 flex items-center justify-between">
+            <div className="sticky top-0 z-30 bg-card border-b border-border p-3 flex items-center justify-between">
               <h1 className="text-lg font-bold text-foreground">
                 {menuItems.find((m) => m.id === activeTab)?.label}
               </h1>
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="p-2 rounded-lg bg-muted/30 hover:bg-muted/50"
+                className="p-2 rounded-lg bg-secondary hover:bg-muted/50"
               >
                 <Menu className="w-5 h-5 text-foreground" />
               </button>
@@ -231,11 +231,13 @@ export default function AdminPanel() {
           )}
 
           <div className={`${isMobile ? "p-3" : "p-6"} container mx-auto`}>
-            {/* Desktop header */}
             {!isMobile && (
               <div className="mb-8 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-accent/20 border border-accent/40 flex items-center justify-center">
-                  <Settings className="w-5 h-5 text-accent" />
+                <div className="w-10 h-10 rounded-xl bg-secondary border border-border flex items-center justify-center">
+                  <svg viewBox="0 0 24 24" className="w-5 h-5 text-primary" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                  </svg>
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-foreground">
@@ -251,12 +253,12 @@ export default function AdminPanel() {
               <div className="space-y-4 animate-entrance">
                 <div className={`grid ${isMobile ? "grid-cols-2" : "grid-cols-4"} gap-2 md:gap-4`}>
                   {[
-                    { label: "Keys Disponíveis", value: totalStock, icon: Package, color: "text-accent" },
-                    { label: "Keys Vendidas", value: totalSold, icon: Key, color: "text-primary" },
+                    { label: "Keys Disponíveis", value: totalStock, icon: Package, color: "text-primary" },
+                    { label: "Keys Vendidas", value: totalSold, icon: Key, color: "text-foreground" },
                     { label: "Usuários", value: users?.length ?? 0, icon: Users, color: "text-primary" },
-                    { label: "Pedidos", value: allOrders?.length ?? 0, icon: ShoppingBag, color: "text-accent" },
+                    { label: "Pedidos", value: allOrders?.length ?? 0, icon: ShoppingBag, color: "text-foreground" },
                   ].map((stat, i) => (
-                    <div key={i} className="p-3 md:p-5 rounded-xl border border-border/50 bg-muted/20">
+                    <div key={i} className="p-3 md:p-5 rounded-xl border border-border bg-card">
                       <div className="flex items-center gap-2 mb-2">
                         <stat.icon className={`w-3 h-3 md:w-4 md:h-4 ${stat.color}`} />
                         <span className="text-xs md:text-sm text-muted-foreground line-clamp-2">{stat.label}</span>
@@ -267,19 +269,19 @@ export default function AdminPanel() {
                 </div>
 
                 {/* Stock summary */}
-                <div className="rounded-2xl border border-border/50 bg-card overflow-hidden">
-                  <div className="p-3 md:p-4 border-b border-border/30 flex items-center gap-2">
+                <div className="rounded-2xl border border-border bg-card overflow-hidden">
+                  <div className="p-3 md:p-4 border-b border-border/50 flex items-center gap-2">
                     <Package className="w-4 h-4 text-primary" />
                     <span className="font-semibold text-foreground text-sm md:text-base">Estoque por Variação</span>
                   </div>
                   <div className={`p-3 md:p-4 grid ${isMobile ? "grid-cols-1" : "grid-cols-3"} gap-3 md:gap-4`}>
                     {stock?.map((v: any) => (
-                      <div key={v.id} className="p-3 rounded-xl border border-border/40 bg-background/50">
+                      <div key={v.id} className="p-3 rounded-xl border border-border bg-background/50">
                         <div className="font-medium text-foreground text-sm md:text-base mb-1">{v.name}</div>
                         <div className="text-xs text-muted-foreground mb-3">R$ {Number(v.price).toFixed(2).replace(".", ",")}</div>
                         <div className="flex justify-between text-xs md:text-sm">
                           <span className="text-muted-foreground">Disponíveis:</span>
-                          <span className={`font-bold ${v.availableCount === 0 ? "text-destructive" : "text-accent"}`}>
+                          <span className={`font-bold ${v.availableCount === 0 ? "text-destructive" : "text-primary"}`}>
                             {v.availableCount}
                           </span>
                         </div>
@@ -298,14 +300,13 @@ export default function AdminPanel() {
             {activeTab === "stock" && (
               <div className="space-y-4 animate-entrance">
                 {/* Add keys form */}
-                <div className="rounded-2xl border border-primary/50 bg-primary/5 p-4 md:p-6">
+                <div className="rounded-2xl border border-primary/30 bg-secondary/50 p-4 md:p-6">
                   <h3 className="font-bold text-base md:text-lg text-foreground mb-4 flex items-center gap-2">
                     <Plus className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                     Adicionar Keys
                   </h3>
 
                   <div className="space-y-4">
-                    {/* Variant selector */}
                     <div>
                       <Label className="text-xs md:text-sm font-medium text-foreground mb-2 block">Selecione a Variação</Label>
                       <div className={`grid ${isMobile ? "grid-cols-1" : "grid-cols-3"} gap-2 md:gap-3`}>
@@ -316,12 +317,12 @@ export default function AdminPanel() {
                             className={`p-3 md:p-4 rounded-lg border-2 transition-all text-left text-sm md:text-base ${
                               selectedVariantId === v.id
                                 ? "border-primary bg-primary/10"
-                                : "border-border/40 bg-background/50 hover:border-primary/30"
+                                : "border-border bg-background/50 hover:border-primary/30"
                             }`}
                           >
                             <div className="font-semibold text-foreground">{v.name}</div>
                             <div className="text-xs text-muted-foreground mt-1">R$ {Number(v.price).toFixed(2).replace(".", ",")}</div>
-                            <div className="text-xs text-accent mt-2 font-medium">
+                            <div className="text-xs text-primary mt-2 font-medium">
                               {v.availableCount} disponíveis
                             </div>
                           </button>
@@ -329,7 +330,6 @@ export default function AdminPanel() {
                       </div>
                     </div>
 
-                    {/* Keys textarea */}
                     <div>
                       <Label className="text-xs md:text-sm font-medium text-foreground mb-2 block">
                         Cole as Keys (uma por linha)
@@ -338,18 +338,17 @@ export default function AdminPanel() {
                         placeholder={"key1\nkey2\nkey3\n..."}
                         value={keysText}
                         onChange={(e) => setKeysText(e.target.value)}
-                        className="bg-input border-border/60 focus:border-primary/60 font-mono text-xs md:text-sm min-h-[150px] md:min-h-[200px]"
+                        className="bg-input border-border focus:border-primary/60 font-mono text-xs md:text-sm min-h-[150px] md:min-h-[200px]"
                       />
                       <div className="text-xs text-muted-foreground mt-2">
                         {keysText.split("\n").filter((k) => k.trim()).length} key(s) detectada(s)
                       </div>
                     </div>
 
-                    {/* Submit button */}
                     <Button
                       onClick={handleAddKeys}
                       disabled={addKeysMutation.isPending || !selectedVariantId || !keysText.trim()}
-                      className="w-full bg-primary hover:bg-primary/90 neon-purple h-10 md:h-12 text-sm md:text-base font-semibold"
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-10 md:h-12 text-sm md:text-base font-semibold primary-glow"
                     >
                       {addKeysMutation.isPending ? (
                         <>
@@ -367,28 +366,31 @@ export default function AdminPanel() {
                 </div>
 
                 {/* Price management */}
-                <div className="rounded-2xl border border-border/50 bg-card p-4 md:p-6">
+                <div className="rounded-2xl border border-border bg-card p-4 md:p-6">
                   <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2 text-sm md:text-base">
-                    <Settings className="w-4 h-4 text-accent" />
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 text-primary" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="3"/>
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
                     Gerenciar Preços
                   </h3>
                   <div className="space-y-2 md:space-y-3">
                     {stock?.map((v: any) => (
-                      <div key={v.id} className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 p-3 rounded-lg border border-border/40 bg-background/50">
+                      <div key={v.id} className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 p-3 rounded-lg border border-border bg-background/50">
                         <span className="flex-1 text-xs md:text-sm font-medium text-foreground">{v.name}</span>
                         <span className="text-xs md:text-sm text-muted-foreground">R$ {Number(v.price).toFixed(2).replace(".", ",")}</span>
                         <Input
                           type="number"
                           step="0.01"
                           placeholder="Novo preço"
-                          className="w-full md:w-28 h-8 bg-input border-border/60 text-xs md:text-sm"
+                          className="w-full md:w-28 h-8 bg-input border-border text-xs md:text-sm"
                           onFocus={() => setNewPrice("")}
                           onChange={(e) => setNewPrice(e.target.value)}
                         />
                         <Button
                           size="sm"
                           variant="outline"
-                          className="border-accent/40 text-accent hover:bg-accent/10 w-full md:w-auto text-xs md:text-sm"
+                          className="border-primary/30 text-primary hover:bg-primary/10 w-full md:w-auto text-xs md:text-sm"
                           onClick={() => handleUpdatePrice(v.id)}
                           disabled={updatePriceMutation.isPending}
                         >
@@ -420,12 +422,12 @@ export default function AdminPanel() {
                   </Button>
                 </div>
                 {users?.map((user: any) => (
-                  <div key={user.id} className="rounded-xl border border-border/50 bg-card overflow-hidden">
+                  <div key={user.id} className="rounded-xl border border-border bg-card overflow-hidden">
                     <button
-                      className="w-full p-3 md:p-4 flex items-center gap-3 hover:bg-muted/20 transition-colors text-left"
+                      className="w-full p-3 md:p-4 flex items-center gap-3 hover:bg-secondary transition-colors text-left"
                       onClick={() => setExpandedUser(expandedUser === user.id ? null : user.id)}
                     >
-                      <div className="w-8 h-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-xs font-bold text-primary flex-shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold flex-shrink-0">
                         {user.username[0].toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -434,14 +436,14 @@ export default function AdminPanel() {
                           {new Date(user.createdAt).toLocaleDateString("pt-BR")}
                         </div>
                       </div>
-                      <span className={`text-xs px-2 py-0.5 rounded-full border flex-shrink-0 ${user.role === "admin" ? "bg-accent/20 text-accent border-accent/30" : "bg-muted/30 text-muted-foreground border-border/40"}`}>
+                      <span className={`text-xs px-2 py-0.5 rounded-full border flex-shrink-0 ${user.role === "admin" ? "bg-primary text-primary-foreground border-primary/30" : "bg-muted text-muted-foreground border-border"}`}>
                         {user.role}
                       </span>
                       {expandedUser === user.id ? <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" /> : <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
                     </button>
 
                     {expandedUser === user.id && (
-                      <div className="border-t border-border/30 p-3 md:p-4 bg-background/30">
+                      <div className="border-t border-border/50 p-3 md:p-4 bg-background/30">
                         <div className="mb-3 flex items-center gap-2">
                           <Key className="w-4 h-4 text-primary" />
                           <span className="text-xs md:text-sm font-medium text-foreground">Keys ({userKeys?.length ?? 0})</span>
@@ -451,11 +453,11 @@ export default function AdminPanel() {
                         ) : (
                           <div className="space-y-2 max-h-60 overflow-y-auto">
                             {userKeys.map((key: any) => (
-                              <div key={key.id} className="flex items-center gap-2 p-2 rounded-lg bg-card border border-border/40">
-                                <span className="text-xs px-2 py-0.5 rounded bg-accent/20 text-accent border border-accent/30 flex-shrink-0">
+                              <div key={key.id} className="flex items-center gap-2 p-2 rounded-lg bg-card border border-border">
+                                <span className="text-xs px-2 py-0.5 rounded bg-secondary text-foreground border border-border flex-shrink-0">
                                   {key.variantName}
                                 </span>
-                                <code className="flex-1 text-xs font-mono text-muted-foreground truncate">{key.keyValue}</code>
+                                <code className="flex-1 text-xs font-mono text-primary truncate">{key.keyValue}</code>
                                 <Button variant="ghost" size="icon" className="w-6 h-6 flex-shrink-0" onClick={() => copyToClipboard(key.keyValue)}>
                                   <Copy className="w-3 h-3" />
                                 </Button>
@@ -480,12 +482,12 @@ export default function AdminPanel() {
                   </Button>
                 </div>
                 {allOrders?.map((order: any) => (
-                  <div key={order.id} className="rounded-xl border border-border/50 bg-card overflow-hidden">
+                  <div key={order.id} className="rounded-xl border border-border bg-card overflow-hidden">
                     <button
-                      className="w-full p-3 md:p-4 flex items-center gap-3 hover:bg-muted/20 transition-colors text-left"
+                      className="w-full p-3 md:p-4 flex items-center gap-3 hover:bg-secondary transition-colors text-left"
                       onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
                     >
-                      <div className={`w-2 h-2 rounded-full flex-shrink-0 ${order.status === "paid" ? "bg-accent" : order.status === "pending" ? "bg-yellow-500" : "bg-destructive"}`} />
+                      <div className={`w-2 h-2 rounded-full flex-shrink-0 ${order.status === "paid" ? "bg-primary" : order.status === "pending" ? "bg-yellow-400" : "bg-destructive"}`} />
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-foreground text-sm md:text-base">Pedido #{order.id}</div>
                         <div className="text-xs text-muted-foreground">
@@ -494,7 +496,7 @@ export default function AdminPanel() {
                       </div>
                       <div className="text-right flex-shrink-0">
                         <div className="font-bold text-foreground text-sm md:text-base">R$ {Number(order.totalAmount).toFixed(2).replace(".", ",")}</div>
-                        <div className={`text-xs ${order.status === "paid" ? "text-accent" : order.status === "pending" ? "text-yellow-500" : "text-destructive"}`}>
+                        <div className={`text-xs ${order.status === "paid" ? "text-primary" : order.status === "pending" ? "text-yellow-400" : "text-destructive"}`}>
                           {order.status === "paid" ? "Pago" : order.status === "pending" ? "Pendente" : "Falhou"}
                         </div>
                       </div>
@@ -502,7 +504,7 @@ export default function AdminPanel() {
                     </button>
 
                     {expandedOrder === order.id && (
-                      <div className="border-t border-border/30 p-3 md:p-4 bg-background/30">
+                      <div className="border-t border-border/50 p-3 md:p-4 bg-background/30">
                         <div className="mb-3 flex items-center gap-2">
                           <Key className="w-4 h-4 text-primary" />
                           <span className="text-xs md:text-sm font-medium text-foreground">Keys ({orderKeys?.length ?? 0})</span>
@@ -512,11 +514,11 @@ export default function AdminPanel() {
                         ) : (
                           <div className="space-y-2">
                             {orderKeys.map((key: any) => (
-                              <div key={key.id} className="flex items-center gap-2 p-2 rounded-lg bg-card border border-border/40">
-                                <span className="text-xs px-2 py-0.5 rounded bg-accent/20 text-accent border border-accent/30 flex-shrink-0">
+                              <div key={key.id} className="flex items-center gap-2 p-2 rounded-lg bg-card border border-border">
+                                <span className="text-xs px-2 py-0.5 rounded bg-secondary text-foreground border border-border flex-shrink-0">
                                   {key.variantName}
                                 </span>
-                                <code className="flex-1 text-xs font-mono text-muted-foreground truncate">{key.keyValue}</code>
+                                <code className="flex-1 text-xs font-mono text-primary truncate">{key.keyValue}</code>
                                 <Button variant="ghost" size="icon" className="w-6 h-6 flex-shrink-0" onClick={() => copyToClipboard(key.keyValue)}>
                                   <Copy className="w-3 h-3" />
                                 </Button>
@@ -541,12 +543,12 @@ export default function AdminPanel() {
                   </Button>
                 </div>
                 {allTickets?.map((ticket: any) => (
-                  <div key={ticket.id} className="rounded-xl border border-border/50 bg-card overflow-hidden">
+                  <div key={ticket.id} className="rounded-xl border border-border bg-card overflow-hidden">
                     <div
-                      className="w-full p-3 md:p-4 flex items-center gap-3 hover:bg-muted/20 transition-colors text-left cursor-pointer"
+                      className="w-full p-3 md:p-4 flex items-center gap-3 hover:bg-secondary transition-colors text-left cursor-pointer"
                       onClick={() => setExpandedTicket(expandedTicket === ticket.id ? null : ticket.id)}
                     >
-                      <div className={`w-2 h-2 rounded-full flex-shrink-0 ${ticket.status === "open" ? "bg-accent" : "bg-muted"}`} />
+                      <div className={`w-2 h-2 rounded-full flex-shrink-0 ${ticket.status === "open" ? "bg-primary" : "bg-muted"}`} />
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-foreground text-sm md:text-base truncate">{ticket.subject}</div>
                         <div className="text-xs text-muted-foreground">
@@ -554,9 +556,9 @@ export default function AdminPanel() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           className="h-8 w-8 text-destructive hover:bg-destructive/10"
                           onClick={(e) => { e.stopPropagation(); handleDeleteTicket(ticket.id); }}
                         >
@@ -567,22 +569,22 @@ export default function AdminPanel() {
                     </div>
 
                     {expandedTicket === ticket.id && (
-                      <div className="border-t border-border/30 p-3 md:p-4 bg-background/30 space-y-4">
+                      <div className="border-t border-border/50 p-3 md:p-4 bg-background/30 space-y-4">
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-bold text-foreground uppercase tracking-wider">Histórico do Chat</span>
                           {ticket.status === "open" && (
-                            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => handleCloseTicket(ticket.id)}>
-                              Fechar Ticket
+                            <Button size="sm" variant="outline" className="h-7 text-xs border-border" onClick={() => handleCloseTicket(ticket.id)}>
+                              Fechar
                             </Button>
                           )}
                         </div>
-                        
-                        <div className="space-y-3 max-h-60 overflow-y-auto p-2 bg-background/50 rounded-lg border border-border/40">
+
+                        <div className="space-y-3 max-h-60 overflow-y-auto p-2 bg-background/50 rounded-lg border border-border">
                           {ticketMessages?.map((m: any) => (
                             <div key={m.id} className={`flex ${m.isAdmin ? "justify-end" : "justify-start"}`}>
-                              <div className={`max-w-[85%] p-2 rounded-lg text-xs ${m.isAdmin ? "bg-accent/20 border border-accent/30" : "bg-primary/10 border border-primary/20"}`}>
+                              <div className={`max-w-[85%] p-2 rounded-lg text-xs ${m.isAdmin ? "bg-secondary border border-border" : "bg-primary text-primary-foreground"}`}>
                                 <div className="font-bold mb-1">{m.isAdmin ? "Você (Suporte)" : ticket.username}</div>
-                                <p className="text-foreground break-words">{m.message}</p>
+                                <p className={`${m.isAdmin ? "text-foreground" : "text-primary-foreground"} break-words`}>{m.message}</p>
                                 <div className="text-[9px] text-muted-foreground mt-1 text-right">
                                   {m.createdAt ? new Date(m.createdAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "--:--"}
                                 </div>
@@ -593,13 +595,13 @@ export default function AdminPanel() {
 
                         {ticket.status === "open" && (
                           <form onSubmit={handleAdminReply} className="flex gap-2">
-                            <Input 
-                              placeholder="Responder cliente..." 
-                              value={adminReply} 
+                            <Input
+                              placeholder="Responder cliente..."
+                              value={adminReply}
                               onChange={(e) => setAdminReply(e.target.value)}
-                              className="h-9 text-sm bg-background"
+                              className="h-9 text-sm bg-background border-border"
                             />
-                            <Button type="submit" size="sm" className="bg-primary neon-purple" disabled={sendReplyMutation.isPending}>
+                            <Button type="submit" size="sm" className="bg-primary text-primary-foreground font-medium" disabled={sendReplyMutation.isPending}>
                               <Send className="w-4 h-4" />
                             </Button>
                           </form>

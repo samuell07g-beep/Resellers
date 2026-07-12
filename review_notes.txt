@@ -1,0 +1,18 @@
+Revisão visual - Home Page (12/07/2026)
+========================================
+- Tema dark monochrome aplicado com sucesso
+- Background preto (#090909) com grid sutil
+- Logo PROXY REVEND em branco/preto funcionando
+- Hero section com tipografia grande e hierarquia clara
+- Botão "Ver Planos" em branco sólido com glow effect
+- Botão "Criar Conta" com borda outline
+- Cards de features com ícones visíveis
+- Planos com destaque "Popular" para 7 dias
+- Navbar sticky com blur backdrop
+- Textos em branco/cinza com boa legibilidade
+
+Problemas a corrigir:
+- Verificar página de login
+- Verificar página de register
+- Verificar shop com cards de produtos
+- Verificar checkout/pagamento

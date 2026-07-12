@@ -4,7 +4,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Shield, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Login() {
@@ -36,23 +36,24 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-background cyber-grid flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
-
+    <div className="min-h-screen bg-background dark-grid flex items-center justify-center p-4">
       <div className="w-full max-w-md animate-entrance relative">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/20 border border-primary/40 neon-purple mb-4">
-            <Shield className="w-7 h-7 text-primary" />
+        {/* Logo mark */}
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary text-primary-foreground mb-4">
+            <svg viewBox="0 0 24 24" className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+              <path d="M16 7V5a4 4 0 0 0-8 0v2"/>
+            </svg>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">
-            <span className="text-primary neon-text-purple">Proxy</span> Revendedores
+          <h1 className="text-2xl font-extrabold tracking-tight text-foreground">
+            PROXY <span className="text-primary">REVEND</span>
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">Entre na sua conta</p>
+          <p className="text-sm text-muted-foreground mt-2">Entre na sua conta</p>
         </div>
 
         {/* Card */}
-        <div className="p-8 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm">
+        <div className="p-8 rounded-2xl border border-border bg-card">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="username" className="text-sm font-medium text-foreground">Usuário</Label>
@@ -62,7 +63,7 @@ export default function Login() {
                 placeholder="Seu usuário"
                 value={username}
                 onChange={e => setUsername(e.target.value)}
-                className="bg-input border-border/60 focus:border-primary/60 h-11"
+                className="bg-input border-border focus:border-primary/60 h-11 text-sm"
                 autoComplete="username"
               />
             </div>
@@ -76,7 +77,7 @@ export default function Login() {
                   placeholder="Sua senha"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="bg-input border-border/60 focus:border-primary/60 h-11 pr-10"
+                  className="bg-input border-border focus:border-primary/60 h-11 pr-10 text-sm"
                   autoComplete="current-password"
                 />
                 <button
@@ -91,7 +92,7 @@ export default function Login() {
 
             <Button
               type="submit"
-              className="w-full h-11 bg-primary hover:bg-primary/90 neon-purple font-semibold"
+              className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-sm primary-glow"
               disabled={loading || !username || !password}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
@@ -111,7 +112,7 @@ export default function Login() {
           </div>
         </div>
 
-        <div className="text-center mt-4">
+        <div className="text-center mt-6">
           <Link href="/">
             <span className="text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
               ← Voltar ao início
